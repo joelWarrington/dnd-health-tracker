@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React from 'react';
+import React, { useContext } from 'react';
 import AddMonster from './components/AddMonster';
 import './App.scss';
-import { AppContextProvider } from './AppContext';
+import { AppContextProvider, AppContext } from './AppContext';
 import { Menu, Container, Image, Grid, Segment } from 'semantic-ui-react';
 
 function App() {
@@ -27,8 +27,8 @@ function App() {
           </Container>
         </Menu>
         <Container>
-          <Grid columns={16} padded="horizontally" divided>
-            <Grid.Column width={10}>
+          <Grid columns="equal" padded="horizontally" divided>
+            <Grid.Column>
               <Grid.Row>
                 <AddMonster />
               </Grid.Row>
