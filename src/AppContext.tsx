@@ -1,19 +1,23 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useReducer } from 'react';
+import monsterReducer from './reducers/monsterReducer';
+import activeMonsterReducer from './reducers/activeMonsterReducer';
 
 export interface AppContextInterface {
   monsters: Array<Object | null>;
   activeMonsters: Array<Object | null>;
-  fetchMonsters: any;
-  addMonster: any;
+  monsterDispatch: any;
+  activeMonsterDispatch: any;
 }
 export const AppContext = createContext<AppContextInterface | null>(null);
 
 export const AppContextProvider = (props: { children: React.ReactNode }) => {
-  const [monsters, fetchMonsters] = useState([]);
-  const [activeMonsters, addMonster] = useState([]);
+  const [monsters, monsterDispatch] = useReducer(monsterReducer, []);
+  const [activeMonsters, activeMonsterDispatch] = useReducer(activeMonsterReducer, []);
 
   return (
-    <AppContext.Provider value={{ monsters, fetchMonsters, activeMonsters, addMonster }}>
+    <AppContext.Provider
+      value={{ monsters, monsterDispatch, activeMonsters, activeMonsterDispatch }}
+    >
       {props.children}
     </AppContext.Provider>
   );
