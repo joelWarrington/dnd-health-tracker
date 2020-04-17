@@ -1,19 +1,19 @@
 /* eslint no-global-assign: "error" */
 /* global dndapi:writable */
 /* exported dndapi */
-const axios = require('axios').default;
+import axios from 'axios';
 
-module.exports = {
+export const api = {
   baseUrl: 'http://www.dnd5eapi.co/api',
   async getMonsters() {
     const monsters = await axios.get(`${this.baseUrl}/monsters`);
     return monsters.data.results;
   },
-  async getMonster(index) {
+  async getMonster(index: string) {
     const monster = await axios.get(`${this.baseUrl}/monsters/${index.toString()}`);
     return monster;
   },
-  async queryMonstersName(name) {
+  async queryMonstersName(name: string) {
     const monsters = await axios.get(`${this.baseUrl}/monsters?${encodeURIComponent(name)}`);
     return monsters;
   },
@@ -25,7 +25,7 @@ module.exports = {
     const conditions = await axios.get(`${this.baseUrl}/conditions`);
     return conditions;
   },
-  async getCondition(index) {
+  async getCondition(index: string) {
     const condition = await axios.get(`${this.baseUrl}/conditions/${index}}`);
     return condition;
   },
@@ -33,7 +33,7 @@ module.exports = {
     const damageTypes = await axios.get(`${this.baseUrl}/damage-types`);
     return damageTypes;
   },
-  async getDamageType(index) {
+  async getDamageType(index: string) {
     const damageType = await axios.get(`${this.baseUrl}/damage-types/${index}`);
     return damageType;
   },
