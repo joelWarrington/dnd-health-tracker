@@ -1,27 +1,48 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { AppContext } from '../AppContext';
-import { Form, Header, Dropdown, Label, Input, Icon, Select, Button } from 'semantic-ui-react';
+import {
+  Form,
+  Header,
+  Dropdown,
+  Label,
+  Input,
+  Icon,
+  Select,
+  Button,
+  Message,
+} from 'semantic-ui-react';
 import { api } from '../api/dndapi';
 import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
-class AddMonster extends React.Component {
+interface MyProps {}
+interface MyState {
+  selectedMonster: string;
+  selectedGroup: Object;
+  hitPoints: string;
+}
+
+class AddMonster extends React.Component<MyProps, MyState> {
+  static contextType = AppContext;
   constructor(props: any) {
     super(props);
-    this.state = {};
+    this.state = {
+      selectedMonster: '',
+      selectedGroup: '',
+      hitPoints: '',
+    };
   }
-  static contextType = AppContext;
   componentDidMount() {
     this.fetch();
   }
-
   async fetch() {
-    const monsters = await api.getMonsters();
-    const monstersAfterMap = _.map(monsters, (monster) => {
-      return this.renameKeys({ index: 'value', name: 'text' }, monster);
+    const response = await api.getMonsters();
+    const monsters = _.map(response, (monster) => {
+      return this.renameKeys({ slug: 'value', name: 'text' }, monster);
     });
-    this.context.monsterDispatch({ type: 'ADD_FETCHED_MONSTERS', monsters: monstersAfterMap });
+    this.context.monsterDispatch({ type: 'ADD_FETCHED_MONSTERS', monsters });
+    this.context.monsterLoadingComplete(true);
   }
-
   renameKeys = (keysMap: any, obj: any) =>
     Object.keys(obj).reduce(
       (acc, key) => ({
@@ -30,42 +51,110 @@ class AddMonster extends React.Component {
       }),
       {}
     );
+  handleMonsterChange = async (e: any, { value }: { value: any }) => {
+    try {
+      this.setState({ selectedMonster: value });
+      if (value != '') {
+        const monster = await api.getMonster(value);
+        if (monster != null) this.setState({ hitPoints: monster.hit_points.toString() });
+      } else {
+        this.setState({ hitPoints: '0' });
+      }
+    } catch (e) {}
+  };
+  handleMonsterAddition = (e: any, { value }: { value: any }) => {
+    this.context.monsterDispatch({
+      type: 'ADD_MONSTER',
+      monster: { value, text: value },
+    });
+  };
+  handleHPChange = (e: any, { value }: { value: any }) => {
+    this.setState({ hitPoints: value });
+  };
+
+  handleGroupAddition = (e: any, { value }: { value: any }) => {
+    this.context.monsterGroupingsDispatch({
+      type: 'ADD_GROUP',
+      group: { value, text: value },
+    });
+  };
+  handleGroupChange = (e: any, { value }: { value: any }) => {
+    this.setState({ selectedGroup: value });
+  };
+
+  handleFormSubmission = async () => {
+    let monster;
+    if (this.state.selectedMonster != '') {
+      monster = await api.getMonster(this.state.selectedMonster);
+      if (monster == null) {
+        monster = { name: this.state.selectedMonster, custom: true, armor_class: '0' };
+      }
+      this.context.activeMonstersDispatch({
+        type: 'ADD_MONSTER',
+        monster: {
+          id: uuidv4(),
+          details: monster,
+          hitPoints: this.state.hitPoints,
+          armorClass: monster.armor_class,
+          group: this.state.selectedGroup,
+        },
+      });
+    }
+  };
 
   render() {
+    const { selectedMonster, selectedGroup } = this.state;
+    const rowAlignCenter = {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+    };
     return (
-      <section>
+      <>
         <Header as="h1">Add a monster to encounter</Header>
-        <Form>
-          <Form.Group>
+        <Form onSubmit={this.handleFormSubmission}>
+          <Form.Group style={rowAlignCenter}>
             <Form.Field
-              control={Select}
-              fluid
-              search
+              additionLabel="Add monster: "
               allowAdditions
               clearable
+              control={Select}
+              noResultsMessage="Add a new monster!"
+              onAddItem={this.handleMonsterAddition}
+              onChange={this.handleMonsterChange}
               options={this.context.monsters}
               placeholder="Select a monster"
-              width={4}
-              onChange={(evt: any, data: any) => {
-                console.log(data.value);
-              }}
-            ></Form.Field>
-            <Form.Input icon="heart" placeholder="HP" iconPosition="left" width={2} fluid />
-            <Form.Input
-              control={Select}
-              fluid
+              value={selectedMonster}
               search
+              label="Monster"
+            ></Form.Field>
+            <Form.Input
+              label="Hit Points"
+              icon="heart"
+              iconPosition="left"
+              onChange={this.handleHPChange}
+              placeholder="HP"
+              type="number"
+              value={this.state.hitPoints}
+            />
+            <Form.Input
+              label="Group"
+              additionLabel="Add group: "
               allowAdditions
               clearable
-              options={[]}
+              control={Select}
+              noResultsMessage="Add a new group!"
+              onAddItem={this.handleGroupAddition}
+              onChange={this.handleGroupChange}
+              options={this.context.monsterGroupings}
               placeholder="Select grouping"
-              width={4}
+              value={selectedGroup}
+              search
             />
-            <Form.Input control={Button} icon="checkmark" positive circular />
-            <Form.Input control={Button} icon="cancel" negative circular />
+            <Form.Input control={Button} icon="checkmark" positive circular type="submit" />
           </Form.Group>
         </Form>
-      </section>
+      </>
     );
   }
 }
