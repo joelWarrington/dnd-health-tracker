@@ -24,13 +24,38 @@ class ActiveMonsters extends React.Component {
     super(props);
     this.state = {};
   }
+  handleHPChange = (e: any, value: string, id: string) => {
+    const monster = _.filter(this.context.activeMonsters, ['id', id])[0];
+    monster.hitPoints = value;
+    this.context.activeMonstersDispatch({
+      type: 'UPDATE_MONSTER',
+      id,
+      monster,
+    });
+  };
+
+  handleGroupAddition = (e: any, { value }: { value: any }) => {
+    this.context.monsterGroupingsDispatch({
+      type: 'ADD_GROUP',
+      group: { value, text: value },
+    });
+  };
+  handleGroupChange = (e: any, value: string, id: string) => {
+    const monster = _.filter(this.context.activeMonsters, ['id', id])[0];
+    monster.group = value;
+    this.context.activeMonstersDispatch({
+      type: 'UPDATE_MONSTER',
+      id,
+      monster,
+    });
+  };
 
   render() {
     const monsters = _.map(this.context.activeMonsters, (monster, index) => {
       console.log(monster);
       return (
         <Grid.Row key={monster.id}>
-          <Grid.Column mobile={16} computer={8}>
+          <Grid.Column mobile={16} tablet={16} computer={8}>
             <Popup
               inverted
               trigger={
@@ -46,7 +71,7 @@ class ActiveMonsters extends React.Component {
                 </Label>
               }
             >
-              View Monster Details
+              Click to view the monsters details
             </Popup>
             <Popup inverted trigger={<Label size="medium" content={monster.details.size} />}>
               Size
@@ -58,7 +83,7 @@ class ActiveMonsters extends React.Component {
               Armor Class
             </Popup>
           </Grid.Column>
-          <Grid.Column mobile={16} computer={8} floated="right">
+          <Grid.Column mobile={16} tablet={16} computer={8} floated="right">
             <Form>
               <Form.Group>
                 <Form.Input
@@ -67,9 +92,8 @@ class ActiveMonsters extends React.Component {
                   placeholder="HP"
                   type="number"
                   fluid
-                  onChange={(e, obj) => {
-                    console.log(e);
-                    console.log(obj);
+                  onChange={(e, { value }) => {
+                    this.handleHPChange(e, value, monster.id);
                   }}
                   value={monster.hitPoints}
                   id={monster.id}
@@ -81,35 +105,23 @@ class ActiveMonsters extends React.Component {
                   clearable
                   control={Select}
                   noResultsMessage="Add a new group!"
-                  // onAddItem={this.handleGroupAddition}
-                  // onChange={this.handleGroupChange}
+                  onAddItem={this.handleGroupAddition}
+                  onChange={(e: any, { value }) => {
+                    this.handleGroupChange(e, value, monster.id);
+                  }}
                   options={this.context.monsterGroupings}
                   placeholder="Select grouping"
                   value={monster.group}
                   search
                   width={8}
                 />
-                {/* <Form.Input
-                  icon="shield"
-                  iconPosition="left"
-                  placeholder="AC"
-                  type="number"
-                  fluid
-                  value={monster.details.armor_class}
-                  id={monster.id}
-                  onChange={(e, obj) => {
-                    console.log(index);
-                    console.log(e);
-                    console.log(obj);
-                  }}
-                /> */}
               </Form.Group>
             </Form>
           </Grid.Column>
         </Grid.Row>
       );
     });
-    return <Grid>{monsters}</Grid>;
+    return <Grid divided="vertically">{monsters}</Grid>;
   }
 }
 

@@ -10,6 +10,7 @@ import {
   Select,
   Button,
   Message,
+  Divider,
 } from 'semantic-ui-react';
 import { api } from '../api/dndapi';
 import _ from 'lodash';
@@ -154,6 +155,7 @@ class AddMonster extends React.Component<MyProps, MyState> {
             <Form.Input control={Button} icon="checkmark" positive circular type="submit" />
           </Form.Group>
         </Form>
+        <Divider />
       </>
     );
   }
