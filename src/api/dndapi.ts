@@ -2,39 +2,57 @@
 /* global dndapi:writable */
 /* exported dndapi */
 import axios from 'axios';
+declare module 'axios' {
+  export interface AxiosResponse<T = any> extends Promise<T> {}
+}
 
 export const api = {
-  baseUrl: 'http://www.dnd5eapi.co/api',
+  baseUrl: 'https://api.open5e.com',
   async getMonsters() {
-    const monsters = await axios.get(`${this.baseUrl}/monsters`);
-    return monsters.data.results;
+    const monsters: any = await new Promise((resolve, reject) => {
+      this.getPaginatedResults(`${this.baseUrl}/monsters/?fields=slug,name`, [], resolve, reject);
+    });
+    return monsters;
   },
-  async getMonster(index: string) {
-    const monster = await axios.get(`${this.baseUrl}/monsters/${index.toString()}`);
-    return monster;
+  async getMonster(slug: string) {
+    try {
+      const monster = await axios.get(`${this.baseUrl}/monsters/${slug}`);
+      return monster.data;
+    } catch (e) {
+      return null;
+    }
   },
   async queryMonstersName(name: string) {
     const monsters = await axios.get(`${this.baseUrl}/monsters?${encodeURIComponent(name)}`);
-    return monsters;
+    return monsters.data.results;
   },
   async getAbilityScores() {
     const abilities = await axios.get(`${this.baseUrl}/ability-scores`);
-    return abilities;
+    return abilities.data.results;
   },
   async getConditions() {
     const conditions = await axios.get(`${this.baseUrl}/conditions`);
-    return conditions;
+    return conditions.data.results;
   },
   async getCondition(index: string) {
     const condition = await axios.get(`${this.baseUrl}/conditions/${index}}`);
-    return condition;
+    return condition.data;
   },
   async getDamageTypes() {
     const damageTypes = await axios.get(`${this.baseUrl}/damage-types`);
-    return damageTypes;
+    return damageTypes.data.results;
   },
   async getDamageType(index: string) {
     const damageType = await axios.get(`${this.baseUrl}/damage-types/${index}`);
-    return damageType;
+    return damageType.data;
+  },
+  async getPaginatedResults(url: string, results: any, resolve: any, reject: any) {
+    const response = await axios.get(url);
+    const retrieveResults = [...results, ...response.data.results];
+    if (response.data.next !== null) {
+      this.getPaginatedResults(response.data.next, retrieveResults, resolve, reject);
+    } else {
+      resolve(retrieveResults);
+    }
   },
 };
