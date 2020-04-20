@@ -3,7 +3,19 @@ import React, { useContext } from 'react';
 import AddMonster from './components/AddMonster';
 import './App.scss';
 import { AppContextProvider, AppContext } from './AppContext';
-import { Menu, Container, Image, Grid, Segment, Dimmer, Loader } from 'semantic-ui-react';
+import {
+  Menu,
+  Container,
+  Image,
+  Grid,
+  Segment,
+  Dimmer,
+  Loader,
+  Header,
+  Modal,
+  Button,
+  Icon,
+} from 'semantic-ui-react';
 import ActiveMonsters from './components/ActiveMonsters';
 
 function App() {
@@ -31,8 +43,8 @@ function App() {
         <Dimmer active={!context?.loadedMonsters}>
           <Loader indeterminate>Fetching Monsters & Dice</Loader>
         </Dimmer>
-        <Grid padded container>
-          <Grid.Column width={9}>
+        <Grid divided="vertically" container doubling>
+          <Grid.Column mobile={16} tablet={16} computer={16}>
             <Grid.Row>
               <AddMonster />
             </Grid.Row>
