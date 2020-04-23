@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { AppContext } from '../AppContext';
-import './ActiveMonsters.scss';
+import './ActiveMonsters.module.scss';
 import {
   Form,
   Header,
@@ -26,7 +26,7 @@ class ActiveMonsters extends React.Component {
   }
   handleHPChange = (e: any, value: string, id: string) => {
     const monster = _.filter(this.context.activeMonsters, ['id', id])[0];
-    monster.hitPoints = value;
+    monster.hit_points = value;
     this.context.activeMonstersDispatch({
       type: 'UPDATE_MONSTER',
       id,
@@ -52,7 +52,6 @@ class ActiveMonsters extends React.Component {
 
   render() {
     const monsters = _.map(this.context.activeMonsters, (monster, index) => {
-      console.log(monster);
       return (
         <Grid.Row key={monster.id}>
           <Grid.Column mobile={16} tablet={16} computer={8}>
@@ -64,7 +63,8 @@ class ActiveMonsters extends React.Component {
                   size="large"
                   color="teal"
                   onClick={() => {
-                    console.log('hi');
+                    this.context.updateSelectedMonster(monster);
+                    this.context.selectMonsterDetails(true);
                   }}
                 >
                   {`${index + 1}. ${monster.details.name}`}
@@ -73,15 +73,23 @@ class ActiveMonsters extends React.Component {
             >
               Click to view the monsters details
             </Popup>
-            <Popup inverted trigger={<Label size="medium" content={monster.details.size} />}>
-              Size
-            </Popup>
-            <Popup
-              inverted
-              trigger={<Label size="medium" icon="shield" content={monster.details.armor_class} />}
-            >
-              Armor Class
-            </Popup>
+            {monster.details.size !== '' ? (
+              <Popup inverted trigger={<Label size="medium" content={monster.details.size} />}>
+                Size
+              </Popup>
+            ) : (
+              <></>
+            )}
+            {monster.armor_class > 0 ? (
+              <Popup
+                inverted
+                trigger={<Label size="medium" icon="shield" content={monster.armor_class} />}
+              >
+                Armor Class
+              </Popup>
+            ) : (
+              <></>
+            )}
           </Grid.Column>
           <Grid.Column mobile={16} tablet={16} computer={8} floated="right">
             <Form>
@@ -95,7 +103,7 @@ class ActiveMonsters extends React.Component {
                   onChange={(e, { value }) => {
                     this.handleHPChange(e, value, monster.id);
                   }}
-                  value={monster.hitPoints}
+                  value={monster.hit_points}
                   id={monster.id}
                   width={8}
                 />
