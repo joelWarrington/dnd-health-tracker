@@ -88,15 +88,27 @@ class AddMonster extends React.Component<MyProps, MyState> {
     if (this.state.selectedMonster != '') {
       monster = await api.getMonster(this.state.selectedMonster);
       if (monster == null) {
-        monster = { name: this.state.selectedMonster, custom: true, armor_class: '0' };
+        monster = {
+          name: this.state.selectedMonster,
+          size: '',
+          hit_points: this.state.hitPoints,
+          armor_class: 0,
+          strength: 10,
+          dexterity: 10,
+          constitution: 10,
+          intelligence: 10,
+          wisdom: 10,
+          charisma: 10,
+          custom: 'yes',
+        };
       }
       this.context.activeMonstersDispatch({
         type: 'ADD_MONSTER',
         monster: {
           id: uuidv4(),
           details: monster,
-          hitPoints: this.state.hitPoints,
-          armorClass: monster.armor_class,
+          hit_points: this.state.hitPoints,
+          armor_class: monster.armor_class,
           group: this.state.selectedGroup,
         },
       });
