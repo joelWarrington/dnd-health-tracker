@@ -17,6 +17,8 @@ import {
   Icon,
 } from 'semantic-ui-react';
 import ActiveMonsters from './components/ActiveMonsters';
+import MonsterDetailsModal from './components/MonsterDetailsModal';
+import ApplyDamageToMonsters from './components/ApplyDamage';
 
 function App() {
   const context = useContext(AppContext);
@@ -43,10 +45,15 @@ function App() {
         <Dimmer active={!context?.loadedMonsters}>
           <Loader indeterminate>Fetching Monsters & Dice</Loader>
         </Dimmer>
+        {context?.selectedMonsterDetails != null ? <MonsterDetailsModal /> : <> </>}
+
         <Grid divided="vertically" container doubling>
           <Grid.Column mobile={16} tablet={16} computer={16}>
             <Grid.Row>
               <AddMonster />
+            </Grid.Row>
+            <Grid.Row>
+              <ApplyDamageToMonsters />
             </Grid.Row>
             <Grid.Row>
               <ActiveMonsters />
