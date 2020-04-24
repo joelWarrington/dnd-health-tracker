@@ -2,7 +2,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/joelwarrington/dnd-health-tracker?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/joelWarrington/dnd-health-tracker?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/joelWarrington/dnd-health-tracker?style=flat-square) ![David](https://img.shields.io/david/dev/joelWarrington/dnd-health-tracker?style=flat-square)
 
-# What is is?
+# What is it?
 
 D&D Health Tracker is a Reactjs web application which is used to help track monster health during encounters in the popular Dungeons & Dragons tabletop game. This application aims to solve headaches when running an encounter while making the life of the dungeon master easier.
 
