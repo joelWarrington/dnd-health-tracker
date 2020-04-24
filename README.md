@@ -8,7 +8,7 @@ D&D Health Tracker is a Reactjs web application which is used to help track mons
 
 Information is retrieved from the [Open5e API](https://open5e.com/) and styled using components from [Semantic UI React](https://react.semantic-ui.com/).
 
-📱 Hosted version is available [here](https://dnd-health-tracker.netlify.app/).
+📱 Hosted version is available [here](https://dnd-ht.netlify.app/).
 
 # Screenshots
 
