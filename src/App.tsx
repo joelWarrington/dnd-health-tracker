@@ -24,7 +24,7 @@ function App() {
   const context = useContext(AppContext);
   return (
     <>
-      <Menu borderless size="small" fluid inverted>
+      <Menu borderless size="small" fluid inverted className="topMenu">
         <Container>
           <Menu.Item content="D&D Health Tracker" header />
           <Menu.Item
