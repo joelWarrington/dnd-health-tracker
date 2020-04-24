@@ -22,7 +22,6 @@ import {
   Placeholder,
 } from 'semantic-ui-react';
 import _ from 'lodash';
-import styles from './ApplyDamage.module.scss';
 
 function MonsterDetailsModal() {
   const context = useContext(AppContext);

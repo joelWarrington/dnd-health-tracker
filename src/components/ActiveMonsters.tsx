@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { AppContext } from '../AppContext';
-import './ActiveMonsters.module.scss';
 import {
   Form,
   Header,
