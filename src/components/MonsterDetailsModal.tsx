@@ -20,13 +20,28 @@ import {
   Label,
   Popup,
   Placeholder,
+  Table,
 } from 'semantic-ui-react';
 import _ from 'lodash';
+
+function formatMiscStats(stats: Array<String>, values: Array<String>) {
+  return _.map(stats, (statLabel, index) => {
+    const statValue = values[index];
+    return statValue != null && statValue != '' ? (
+      <Table.Row>
+        <Table.Cell>{statLabel}</Table.Cell>
+        <Table.Cell>{statValue}</Table.Cell>
+      </Table.Row>
+    ) : (
+      <></>
+    );
+  });
+}
 
 function MonsterDetailsModal() {
   const context = useContext(AppContext);
   const selectedMonster = context?.selectedMonsterDetails;
-
+  console.log(selectedMonster);
   return (
     <Modal
       open={context?.monsterDetailsSelected}
@@ -89,6 +104,7 @@ function MonsterDetailsModal() {
             Speed
           </Popup> */}
           <Divider />
+
           <Container textAlign="center">
             <Statistic size="tiny">
               <Statistic.Label>STR</Statistic.Label>
@@ -144,6 +160,19 @@ function MonsterDetailsModal() {
             </Form.Group>
           </Form> */}
           <Divider />
+          <Table celled collapsing>
+            <Table.Body>
+              {formatMiscStats(
+                ['Damage Resistances', 'Damage Immunities', 'Senses', 'Languages'],
+                [
+                  selectedMonster.details?.damage_resistances,
+                  selectedMonster.details?.damage_immunities,
+                  selectedMonster.details?.senses,
+                  selectedMonster.details?.languages,
+                ]
+              )}
+            </Table.Body>
+          </Table>
           <Header size="medium">Reactions</Header>
           <Placeholder>
             <Placeholder.Paragraph>
